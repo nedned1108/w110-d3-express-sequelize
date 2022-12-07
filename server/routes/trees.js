@@ -99,7 +99,6 @@ router.post('/', async (req, res, next) => {
             groundCircumferenceFt: size
         })
 
-
         res.json({
             status: "success",
             message: "Successfully created new tree",
@@ -135,10 +134,29 @@ router.post('/', async (req, res, next) => {
  */
 router.delete('/:id', async (req, res, next) => {
     try {
-        res.json({
-            status: "success",
-            message: `Successfully removed tree ${req.params.id}`,
-        });
+        const { id } = req.params;
+        const deleteTree = await Tree.findByPk(id);
+
+        if (deleteTree !== null) {
+
+            await deleteTree.destroy();
+
+            res.json({
+                status: "success",
+                message: `Successfully removed tree ${req.params.id}`,
+            });
+        } else {
+            next(
+                {
+                    status: "not-found",
+                    message: `Could not remove tree ${id}`,
+                    details: "Tree not found"
+                }
+            )
+        }
+
+
+
     } catch(err) {
         next({
             status: "error",
