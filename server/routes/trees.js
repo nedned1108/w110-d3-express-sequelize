@@ -2,17 +2,19 @@
 const express = require('express');
 const router = express.Router();
 
+
 /**
  * BASIC PHASE 1, Step A - Import model
  */
 // Your code here
+const { Tree } = require('../db/models');
 
 /**
  * INTERMEDIATE BONUS PHASE 1 (OPTIONAL), Step A:
  *   Import Op to perform comparison operations in WHERE clauses
  **/
 // Your code here
-
+const { Op } = require('sequelize');
 /**
  * BASIC PHASE 1, Step B - List of all trees in the database
  *
@@ -27,8 +29,13 @@ router.get('/', async (req, res, next) => {
     let trees = [];
 
     // Your code here
+    trees = await Tree.findAll({
+        attributes: ['heightFt', 'tree', 'id'],
+        order: [['heightFt', 'DESC']]
+    })
 
     res.json(trees);
+
 });
 
 /**
@@ -45,6 +52,8 @@ router.get('/:id', async (req, res, next) => {
 
     try {
         // Your code here
+        const id = req.params.id;
+        tree = await Tree.findByPk(id);
 
         if (tree) {
             res.json(tree);
